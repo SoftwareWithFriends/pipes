@@ -1,6 +1,6 @@
 require 'system_pipe'
 
-module Pipe
+module Pipes
   class SshPipe < SystemPipe
 
     attr_reader :command

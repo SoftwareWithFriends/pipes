@@ -1,6 +1,6 @@
 require 'forwardable'
 
-module Pipe
+module Pipes
   class SystemPipe
 
     extend Forwardable

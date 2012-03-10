@@ -1,6 +1,6 @@
 require "test_helper"
 
-module Pipe
+module Pipes
   class SshPipeTest < Test::Unit::TestCase
 
     def test_can_nest_ssh_hosts

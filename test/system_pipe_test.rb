@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'escape'
 
-module Pipe
+module Pipes
   class SystemPipeTest < Test::Unit::TestCase
 
       attr_reader :system_pipe
