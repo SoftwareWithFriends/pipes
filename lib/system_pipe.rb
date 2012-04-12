@@ -32,6 +32,15 @@ module Pipes
       raise ReturnCodeException, "Failed to run command:#{command} because #{return_code_line}" unless return_code_line.match /Return Code: 0/
     end
 
+    def puts_with_output_to_dev_null(command)
+      puts "#{command} 2>&1 >/dev/null"
+    end
+
+    def puts_limit_one_line(command)
+      puts "#{command} | head -1"
+    end
+
+
     private
 
     def open_pipe_for_writing(command)
