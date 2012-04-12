@@ -22,5 +22,14 @@ module Pipes
       SshPipe.new(["hosta", "hostb"],'testuser')
     end
 
+    def test_nil_user_results_in_no_user
+      SshPipe.any_instance.expects(:open_pipe_for_writing).with {|value| value.match /\shosta ssh hostb/ }
+      SshPipe.new(["hosta", "hostb"])
+    end
+
+    def test_empty_user_string_results_in_no_user
+      SshPipe.any_instance.expects(:open_pipe_for_writing).with {|value| value.match /\shosta ssh hostb/ }
+      SshPipe.new(["hosta", "hostb"],'')
+    end
   end
 end

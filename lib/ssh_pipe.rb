@@ -1,5 +1,3 @@
-require 'system_pipe'
-
 module Pipes
   class SshPipe < SystemPipe
 
@@ -17,7 +15,7 @@ module Pipes
 
     def initial_ssh_command(host,user)
       ssh_command =  "ssh #{ssh_options}"
-      ssh_command += "#{user}@" if user
+      ssh_command += "#{user}@" if user_specified(user)
       ssh_command += "#{host} "
       ssh_command
     end
@@ -30,6 +28,10 @@ module Pipes
       options += "-o 'CheckHostIP no' "
       options += "-o 'PasswordAuthentication no' "
       options
+    end
+
+    def user_specified(user)
+      user && (not user.empty?)
     end
 
     def close

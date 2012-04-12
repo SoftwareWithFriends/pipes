@@ -1,2 +1,2 @@
-require 'system_pipe'
-require 'ssh_pipe'
+require_relative 'system_pipe'
+require_relative 'ssh_pipe'
