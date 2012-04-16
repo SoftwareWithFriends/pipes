@@ -27,6 +27,7 @@ module Pipes
       options += "-o 'ConnectionAttempts 5' "
       options += "-o 'CheckHostIP no' "
       options += "-o 'PasswordAuthentication no' "
+      options += "-o 'ForwardAgent no' "
       options
     end
 
