@@ -21,10 +21,14 @@ module Pipes
 
       def test_run_command_through_pipe
         system_pipe.puts("echo test_string")
-
         assert_equal "test_string", system_pipe.readline.chomp
       end
 
+      def test_ensures_started_during_initialize
+        SystemPipe.any_instance.expects(:ensure_started)
+        pipe = SystemPipe.new("date")
+
+      end
 
       def test_can_write_file_through_pipe_and_get_return_code
 

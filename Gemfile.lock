@@ -1,0 +1,22 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    ansi (1.4.2)
+    escape (0.0.4)
+    metaclass (0.0.1)
+    minitest (2.12.1)
+    minitest-reporters (0.6.0)
+      ansi
+      minitest (~> 2.0)
+      ruby-progressbar
+    mocha (0.11.3)
+      metaclass (~> 0.0.1)
+    ruby-progressbar (0.0.10)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  escape
+  minitest-reporters
+  mocha

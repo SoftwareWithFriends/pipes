@@ -12,6 +12,12 @@ module Pipes
 
     def initialize(command)
       @pipe = open_pipe_for_writing(command)
+      ensure_started
+      @pipe
+    end
+
+    def ensure_started
+      run_command_and_ensure_return_code("whoami")
     end
 
     def write_file(file_path, contents)
