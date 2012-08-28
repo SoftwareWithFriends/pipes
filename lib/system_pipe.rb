@@ -5,7 +5,8 @@ module Pipes
 
     extend Forwardable
 
-    class ReturnCodeException < Exception; end
+    class ReturnCodeException < Exception;
+    end
 
     attr_reader :pipe
     def_delegators :pipe, :puts, :readline, :close, :each, :readlines, :write
@@ -46,17 +47,46 @@ module Pipes
       puts "#{command} | head -1"
     end
 
-
-    private
-
-    def open_pipe_for_writing(command)
-      IO.popen(command, "w+")
-    end
-
-    def flush_until(expected)
-      until(match = readline.match(expected)); end
-      match.string.chomp
-    end
-
+    def follow_file(file_name)
+      trigger = "FINISHED LINE"
+      puts follow_file_command(file_name, trigger)
+      while line = readline
+        yield line
+      end
+    ensure
+      puts trigger
   end
+
+  def follow_file_command(file_name, finished_trigger)
+    "control ()
+      {
+          while read line; do
+              if [[ \"$line\" == \"#{finished_trigger}\" ]]; then
+                  exit
+              fi
+          done
+      }
+
+      control <&0 &
+      CONTROL_PID=$!
+      tail --pid $CONTROL_PID -qF #{file_name} 2>&1
+      "
+  end
+
+  def flush_until(expected)
+    output = ""
+    until output.match(expected)
+      output = readline
+    end
+    output.chomp
+  end
+
+  private
+
+  def open_pipe_for_writing(command)
+    IO.popen(command, "w+")
+  end
+
+
+end
 end
