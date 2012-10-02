@@ -1,7 +1,7 @@
 Gem::Specification.new do|spec|
 
   spec.name = 'pipes' 
-  spec.version = '0.2.0'
+  spec.version = '0.2.1'
   spec.summary = 'Pipes for doing things'
   spec.description = 'Various classes for dealing with system type pipes in linux'
   spec.files = Dir['lib/**/*.rb']
