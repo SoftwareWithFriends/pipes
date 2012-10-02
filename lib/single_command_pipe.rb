@@ -14,13 +14,22 @@ module Pipes
     end
 
     def setup_trap
-      if previous_term_trap = trap("TERM") { kill_current_process_tree }
-        trap("TERM") { kill_current_process_tree; previous_term_trap.call }
+      previous_term_trap = trap("TERM",kill_proc)
+      if previous_term_trap != "DEFAULT"
+        trap("TERM", kill_proc_with_previous(previous_term_trap))
       end
 
-      if previous_exit_trap = trap("EXIT") { kill_current_process_tree }
-        trap("EXIT") { kill_current_process_tree; previous_exit_trap.call }
-      end
+      #if previous_exit_trap = trap("EXIT", kill_proc)
+      #  trap("EXIT", kill_proc_with_previous(previous_exit_trap))
+      #end
+    end
+
+    def kill_proc_with_previous(previous_proc)
+      proc { kill_current_process_tree; previous_proc.call }
+    end
+
+    def kill_proc
+      proc { kill_current_process_tree }
     end
 
     def kill_current_process_tree
