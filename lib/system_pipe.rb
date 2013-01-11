@@ -81,6 +81,11 @@ module Pipes
     output.chomp
   end
 
+  def cp(source, destination)
+    copy_file_command = "cp #{source} #{destination}"
+    run_command_and_ensure_return_code(copy_file_command)
+  end
+
   private
 
   def open_pipe_for_writing(command)

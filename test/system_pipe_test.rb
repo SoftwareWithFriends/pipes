@@ -68,5 +68,15 @@ module Pipes
 
     end
 
+    def test_can_send_copy_command
+      source = "/foo"
+      destination = "/bar"
+
+      @system_pipe.expects(:run_command_and_ensure_return_code).
+          with("cp #{source} #{destination}")
+
+      @system_pipe.cp(source, destination)
+    end
+
   end
 end
