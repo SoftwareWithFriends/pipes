@@ -55,10 +55,10 @@ module Pipes
       end
     ensure
       puts trigger
-  end
+    end
 
-  def follow_file_command(file_name, finished_trigger)
-    "control ()
+    def follow_file_command(file_name, finished_trigger)
+      "control ()
       {
           while read line; do
               if [[ \"$line\" == \"#{finished_trigger}\" ]]; then
@@ -71,27 +71,36 @@ module Pipes
       CONTROL_PID=$!
       tail --pid $CONTROL_PID -qF #{file_name} 2>&1
       "
-  end
-
-  def flush_until(expected)
-    output = ""
-    until output.match(expected)
-      output = readline
     end
-    output.chomp
+
+    def flush_until(expected)
+      output = ""
+      until output.match(expected)
+        output = readline
+      end
+      output.chomp
+    end
+
+    def cp(source, destination)
+      copy_file_command = "cp #{source} #{destination}"
+      run_command_and_ensure_return_code(copy_file_command)
+    end
+
+    def backup_file(source)
+      destination = "#{source}.bak_#{backup_timestamp}"
+      cp(source, destination)
+    end
+
+    def backup_timestamp
+      Time.now.utc.strftime("%Y%m%d_%H%M%S")
+    end
+
+    private
+
+    def open_pipe_for_writing(command)
+      IO.popen(command, "w+")
+    end
+
+
   end
-
-  def cp(source, destination)
-    copy_file_command = "cp #{source} #{destination}"
-    run_command_and_ensure_return_code(copy_file_command)
-  end
-
-  private
-
-  def open_pipe_for_writing(command)
-    IO.popen(command, "w+")
-  end
-
-
-end
 end

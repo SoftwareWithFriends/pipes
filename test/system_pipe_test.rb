@@ -72,10 +72,21 @@ module Pipes
       source = "/foo"
       destination = "/bar"
 
-      @system_pipe.expects(:run_command_and_ensure_return_code).
+      system_pipe.expects(:run_command_and_ensure_return_code).
           with("cp #{source} #{destination}")
 
-      @system_pipe.cp(source, destination)
+      system_pipe.cp(source, destination)
+    end
+
+    def test_can_backup_file
+      source = "foo"
+      test_time = DateTime.parse("2013-01-11 13:55:11")
+      destination = "foo.bak_20130111_135511"
+
+      Time.expects(:now).returns(test_time.to_time)
+
+      system_pipe.expects(:cp).with(source, destination)
+      system_pipe.backup_file(source)
     end
 
   end
