@@ -77,6 +77,7 @@ module Pipes
       output = ""
       until output.match(expected)
         output = readline
+        yield output if block_given?
       end
       output.chomp
     end
