@@ -30,11 +30,16 @@ module Pipes
     end
 
     def close
-      outputs << "close"
+      inputs << "close"
     end
 
     def write(string)
-      outputs << string
+      inputs << string
+    end
+
+    def run_command_and_ensure_return_code(command)
+      outputs.unshift "Return Code: 0"
+      super(command)
     end
 
   end
