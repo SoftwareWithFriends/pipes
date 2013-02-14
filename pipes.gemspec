@@ -8,5 +8,5 @@ Gem::Specification.new do|spec|
   spec.files += Dir['test/**/*']
   spec.authors = ["Ryan McGarvey, Tim Johnson"]
   spec.require_path = 'lib'
-  s.add_dependency("escape", [">= 0.0.4"])
+  spec.add_dependency("escape", [">= 0.0.4"])
 end
