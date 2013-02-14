@@ -6,8 +6,8 @@ module Pipes
 
     attr_reader :system_pipe
 
-    TEST_FILE = "/tmp/test_file"
-    TEST_DIR = "/tmp/foo"
+    TEST_FILE = File.join(Pipes::GEM_PATH, "/test_file")
+    TEST_DIR = File.join(Pipes::GEM_PATH, "/foo")
 
     def setup
       File.delete(TEST_FILE) if File.exist?(TEST_FILE)
@@ -52,7 +52,7 @@ module Pipes
     def test_can_follow_file
       max_num_lines = 3
       lines = []
-      fake_log = File.dirname(__FILE__) + "/fixtures/tailable_log_file.log"
+      fake_log = GEM_PATH + "/test/fixtures/tailable_log_file.log"
       system_pipe.follow_file(fake_log) do |line|
         lines << line
         break if lines.size >= max_num_lines
@@ -83,7 +83,8 @@ module Pipes
       test_time = DateTime.parse("2013-01-11 13:55:11")
       destination = "foo.bak_20130111_135511"
 
-      Time.expects(:now).returns(test_time.to_time)
+      system_pipe.expects(:current_time).returns(test_time.to_time)
+
 
       system_pipe.expects(:cp).with(source, destination)
       system_pipe.backup_file(source)

@@ -93,8 +93,13 @@ module Pipes
     end
 
     def backup_timestamp
-      Time.now.utc.strftime("%Y%m%d_%H%M%S")
+      current_time.utc.strftime("%Y%m%d_%H%M%S")
     end
+
+    def current_time
+      Time.now
+    end
+
 
     private
 

@@ -1,17 +1,22 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    ansi (1.4.2)
+    ansi (1.4.3)
+    builder (3.1.4)
     escape (0.0.4)
+    hashie (1.2.0)
     metaclass (0.0.1)
-    minitest (2.12.1)
-    minitest-reporters (0.6.0)
+    minitest (4.6.0)
+    minitest-reporters (0.14.7)
       ansi
-      minitest (~> 2.0)
-      ruby-progressbar
-    mocha (0.11.3)
+      builder
+      minitest (>= 2.12, < 5.0)
+      powerbar
+    mocha (0.13.2)
       metaclass (~> 0.0.1)
-    ruby-progressbar (0.0.10)
+    powerbar (1.0.11)
+      ansi (~> 1.4.0)
+      hashie (>= 1.1.0)
 
 PLATFORMS
   ruby
