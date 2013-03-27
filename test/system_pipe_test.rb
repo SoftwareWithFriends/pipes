@@ -16,7 +16,8 @@ module Pipes
     end
 
     def teardown
-      @system_pipe.close
+      @system_pipe.unstub(:close)
+      @system_pipe.close unless @system_pipe.closed?
     end
 
     def test_run_command_through_pipe
@@ -27,7 +28,26 @@ module Pipes
     def test_ensures_started_during_initialize
       SystemPipe.any_instance.expects(:ensure_started)
       pipe = SystemPipe.new("date")
+    end
 
+    def test_times_out_instead_of_blocking
+      system_pipe.puts("sleep 1")
+      system_pipe.close_with_timeout(0.1)
+      assert_equal 1, system_pipe.abandoned_pipes_count
+    end
+
+    def test_handles_errors_during_close_timeout
+      system_pipe.expects(:close).raises(Errno::EPIPE, "Fake Message")
+      system_pipe.close_with_timeout(1)
+      assert_equal 1, system_pipe.abandoned_pipes_count
+      assert ! @system_pipe.closed?
+    end
+
+    def test_can_retry_pipe
+      system_pipe.puts "echo first tube"
+      system_pipe.retry
+      system_pipe.puts "echo second tube"
+      assert_equal "second tube", system_pipe.readline.chomp
     end
 
     def test_can_write_file_through_pipe_and_get_return_code

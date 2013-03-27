@@ -5,20 +5,45 @@ module Pipes
 
     extend Forwardable
 
+    PIPE_CLOSE_TIMEOUT = 0.5
+
     class ReturnCodeException < Exception;
     end
 
-    attr_reader :pipe
-    def_delegators :pipe, :puts, :readline, :close, :each, :readlines, :write
+    attr_reader :pipe, :initial_command, :abandoned_pipes_count
+    def_delegators :pipe, :puts, :readline, :close, :each, :readlines, :write, :closed?
 
-    def initialize(command)
-      @pipe = open_pipe_for_writing(command)
+    def initialize(initial_command)
+      @initial_command = initial_command
+      @abandoned_pipes_count = 0
+      start_pipe
+    end
+
+    def start_pipe
+      @pipe = open_pipe_for_writing(initial_command)
       ensure_started
-      @pipe
     end
 
     def ensure_started
       run_command_and_ensure_return_code("whoami")
+    end
+
+    def retry
+      close_with_timeout
+      start_pipe
+    end
+
+
+    def close_with_timeout(timeout = PIPE_CLOSE_TIMEOUT)
+      begin
+        Timeout::timeout(timeout) do
+          close unless closed?
+        end
+      rescue Timeout::Error, Errno::EPIPE => exception
+        @abandoned_pipes_count += 1
+        Kernel.puts " Total Abandoned Pipes: #{abandoned_pipes_count}"
+        Kernel.puts " Exception during unsafe_close: #{exception.message}"
+      end
     end
 
     def write_file(file_path, contents)
