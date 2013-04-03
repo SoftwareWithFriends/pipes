@@ -40,12 +40,12 @@ module Pipes
       system_pipe.expects(:close).raises(Errno::EPIPE, "Fake Message")
       system_pipe.close_with_timeout(1)
       assert_equal 1, system_pipe.abandoned_pipes_count
-      assert ! @system_pipe.closed?
+      assert !@system_pipe.closed?
     end
 
     def test_can_retry_pipe
       system_pipe.puts "echo first tube"
-      system_pipe.retry
+      system_pipe.retry_pipe
       system_pipe.puts "echo second tube"
       assert_equal "second tube", system_pipe.readline.chomp
     end
@@ -108,6 +108,26 @@ module Pipes
 
       system_pipe.expects(:cp).with(source, destination)
       system_pipe.backup_file(source)
+    end
+
+
+    def test_can_write_command_and_read_single_number
+      command = "this is the command"
+      system_pipe.expects(:puts_limit_one_line).with(command)
+      system_pipe.expects(:readline).returns("50.2")
+      assert_equal 50.2, system_pipe.puts_command_read_number(command)
+    end
+
+    def test_handles_timeout
+      command = "fake command"
+
+      system_pipe.expects(:puts_limit_one_line).raises(Timeout::Error)
+      system_pipe.expects(:retry_pipe)
+
+      assert_raise Pipes::PipeReset do
+        system_pipe.puts_command_read_number(command)
+      end
+
     end
 
   end

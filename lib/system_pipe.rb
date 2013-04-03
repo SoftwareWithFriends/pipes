@@ -1,11 +1,16 @@
 require 'forwardable'
 
 module Pipes
+
+  class PipeReset < StandardError
+  end
+
   class SystemPipe
 
     extend Forwardable
 
     PIPE_CLOSE_TIMEOUT = 0.5
+    PIPE_COMMAND_TIMEOUT = 5
 
     class ReturnCodeException < Exception;
     end
@@ -28,7 +33,7 @@ module Pipes
       run_command_and_ensure_return_code("whoami")
     end
 
-    def retry
+    def retry_pipe
       close_with_timeout
       start_pipe
     end
@@ -44,6 +49,16 @@ module Pipes
         Kernel.puts " Total Abandoned Pipes: #{abandoned_pipes_count}"
         Kernel.puts " Exception during unsafe_close: #{exception.message}"
       end
+    end
+
+    def puts_command_read_number(command, timeout = PIPE_COMMAND_TIMEOUT)
+      Timeout::timeout(timeout) do
+        puts_limit_one_line command
+        readline.to_f
+      end
+    rescue Timeout::Error, Errno::EPIPE, EOFError => exception
+      retry_pipe
+      raise PipeReset, "#{exception.class}: #{exception.message}"
     end
 
     def write_file(file_path, contents)
