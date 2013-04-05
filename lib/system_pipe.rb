@@ -73,10 +73,15 @@ module Pipes
     end
 
     def run_command_and_ensure_return_code(command)
+      output = []
       puts command
       puts "echo Return Code: $?"
-      return_code_line = flush_until("Return Code:")
+      return_code_line = flush_until("Return Code:") do |line|
+        output << line.chomp
+      end
+      output.pop
       raise ReturnCodeException, "Failed to run command:#{command} because #{return_code_line}" unless return_code_line.match /Return Code: 0/
+      output
     end
 
     def puts_with_output_to_dev_null(command)

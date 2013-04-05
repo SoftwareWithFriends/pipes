@@ -69,6 +69,11 @@ module Pipes
       end
     end
 
+    def test_can_return_output_from_good_return
+      output = system_pipe.run_command_and_ensure_return_code("echo test")
+      assert_equal ["test"], output
+    end
+
     def test_can_follow_file
       max_num_lines = 3
       lines = []

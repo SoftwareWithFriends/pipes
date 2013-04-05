@@ -38,7 +38,7 @@ module Pipes
     end
 
     def run_command_and_ensure_return_code(command)
-      outputs.unshift "Return Code: 0"
+      outputs.push "Return Code: 0"
       super(command)
     end
 
