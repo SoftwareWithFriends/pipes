@@ -135,5 +135,14 @@ module Pipes
 
     end
 
+    def test_can_retry_after_timeout
+      assert_raise Pipes::PipeReset do
+        system_pipe.retry_after_timeout(0.1) do
+          puts "sleep 1; echo 'Timeout in test did not get hit'"
+          Kernel.puts readline
+        end
+      end
+    end
+
   end
 end

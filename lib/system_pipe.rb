@@ -52,9 +52,15 @@ module Pipes
     end
 
     def puts_command_read_number(command, timeout = PIPE_COMMAND_TIMEOUT)
-      Timeout::timeout(timeout) do
+      retry_after_timeout(timeout) do
         puts_limit_one_line command
         readline.to_f
+      end
+    end
+
+    def retry_after_timeout(timeout = PIPE_COMMAND_TIMEOUT, &block)
+      Timeout::timeout(timeout) do
+        instance_eval &block
       end
     rescue Timeout::Error, Errno::EPIPE, EOFError => exception
       retry_pipe
