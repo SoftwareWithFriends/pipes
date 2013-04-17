@@ -98,7 +98,7 @@ module Pipes
       destination = "/bar"
 
       system_pipe.expects(:run_command_and_ensure_return_code).
-          with("cp #{source} #{destination}")
+          with("cp #{source} #{destination} 2>&1")
 
       system_pipe.cp(source, destination)
     end

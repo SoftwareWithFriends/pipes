@@ -86,7 +86,7 @@ module Pipes
         output << line.chomp
       end
       output.pop
-      raise ReturnCodeException, "Failed to run command:#{command} because #{return_code_line}" unless return_code_line.match /Return Code: 0/
+      raise ReturnCodeException, "Failed to run command:#{command} because #{return_code_line}.\n#{output.join("\n")}" unless return_code_line.match /Return Code: 0/
       output
     end
 
@@ -134,7 +134,7 @@ module Pipes
     end
 
     def cp(source, destination)
-      copy_file_command = "cp #{source} #{destination}"
+      copy_file_command = "cp #{source} #{destination} 2>&1"
       run_command_and_ensure_return_code(copy_file_command)
     end
 
