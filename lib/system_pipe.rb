@@ -5,12 +5,11 @@ module Pipes
   class PipeReset < StandardError
   end
 
+  PIPE_COMMAND_TIMEOUT = 5
+  PIPE_CLOSE_TIMEOUT = 0.5
+
   class SystemPipe
-
     extend Forwardable
-
-    PIPE_CLOSE_TIMEOUT = 0.5
-    PIPE_COMMAND_TIMEOUT = 5
 
     class ReturnCodeException < Exception;
     end
@@ -64,7 +63,7 @@ module Pipes
       end
     rescue Timeout::Error, Errno::EPIPE, EOFError => exception
       retry_pipe
-      raise PipeReset, "#{exception.class}: #{exception.message}"
+        raise PipeReset, "#{exception.class}: #{exception.message}"
     end
 
     def write_file(file_path, contents)

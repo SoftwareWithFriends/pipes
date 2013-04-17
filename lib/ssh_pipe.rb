@@ -1,16 +1,16 @@
 module Pipes
   class SshPipe < SystemPipe
 
-    attr_reader :command, :hosts
+    attr_reader :initialization_command, :hosts
 
     def initialize(ssh_hosts, user = nil)
       @hosts = ssh_hosts.clone
-      @command = initial_ssh_command(ssh_hosts.shift,user)
+      @initialization_command = initial_ssh_command(ssh_hosts.shift,user)
 
       ssh_hosts.each do |host|
-        @command += "ssh #{host} "
+        @initialization_command += "ssh #{host} "
       end
-      super(command)
+      super(initialization_command)
     end
 
     def initial_ssh_command(host,user)
