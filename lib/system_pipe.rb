@@ -14,6 +14,9 @@ module Pipes
     class ReturnCodeException < Exception;
     end
 
+    NUMBER_ONLY_REGEX = /^(\d*(\.\d)?\d*)$/
+
+
     attr_reader :pipe, :initial_command, :abandoned_pipes_count
     def_delegators :pipe, :puts, :readline, :close, :each, :readlines, :write, :closed?
 
@@ -53,8 +56,13 @@ module Pipes
     def puts_command_read_number(command, timeout = PIPE_COMMAND_TIMEOUT)
       retry_after_timeout(timeout) do
         puts_limit_one_line command
-        readline.to_f
+        extract_number_from_string(readline.strip)
       end
+    end
+
+    def extract_number_from_string(response)
+      match = response.match(NUMBER_ONLY_REGEX) unless response.empty?
+      match ? match.captures.first.to_f : nil
     end
 
     def retry_after_timeout(timeout = PIPE_COMMAND_TIMEOUT, &block)
@@ -63,7 +71,7 @@ module Pipes
       end
     rescue Timeout::Error, Errno::EPIPE, EOFError => exception
       retry_pipe
-        raise PipeReset, "#{exception.class}: #{exception.message}"
+      raise PipeReset, "#{exception.class}: #{exception.message}"
     end
 
     def write_file(file_path, contents)

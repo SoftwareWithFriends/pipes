@@ -123,6 +123,31 @@ module Pipes
       assert_equal 50.2, system_pipe.puts_command_read_number(command)
     end
 
+    def test_deals_with_non_numberic_response
+      response = system_pipe.extract_number_from_string("25.12Not A Number25.15")
+      assert_nil response
+    end
+
+    def test_converts_float_string_to_number
+      response = system_pipe.extract_number_from_string("25.15")
+      assert_equal 25.15, response
+    end
+
+    def test_converts_single_digit_number_string_to_number
+      response = system_pipe.extract_number_from_string("2")
+      assert_equal 2, response
+    end
+
+    def test_converts_decimal_with_no_leading_zero_to_number
+      response = system_pipe.extract_number_from_string(".5")
+      assert_equal 0.5, response
+    end
+
+    def test_does_not_match_on_blank_string
+      response = system_pipe.extract_number_from_string("".strip)
+      assert_nil response
+    end
+
     def test_handles_timeout
       command = "fake command"
 
@@ -143,6 +168,8 @@ module Pipes
         end
       end
     end
+
+
 
   end
 end
